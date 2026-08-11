@@ -1,6 +1,6 @@
 # Simple 广场 · 仿真 Excel
 
-用浏览器登录态读取 [simple.imsummer.cn](https://simple.imsummer.cn/web) 的广场数据，做成一个带 Excel 风格表格的本地网页：支持手动刷新、滚动懒加载、排序、筛选、列显隐和 CSV 导出。
+用浏览器登录态读取 [simple.imsummer.cn/web](https://simple.imsummer.cn/web) 的广场数据，做成一个带 Excel 风格表格的本地网页：支持手动刷新、滚动懒加载、排序、筛选、列显隐和 CSV 导出。
 
 ## 快速开始
 
@@ -18,8 +18,8 @@ node server.js
 
 - **手动刷新**：工具栏「⟳ 手动刷新」重新拉取第一页。
 - **懒加载**：滚动到底部自动用 `last_id` 游标翻页，和源站行为一致。
-- **广场帖子**：直接读取 `api/v2/posts`（全部帖子），表格内显示图片缩略图，点击可查看原图。
-- **点赞 / 收藏**：表格「点赞」「收藏」列以复选框形式点赞 / 取消点赞、收藏 / 取消收藏（调用 `api/v2/votes`、`api/v2/favourites`），即时反馈状态。
+- **广场帖子**：直接读取 全部tie，表格内显示图片缩略图，点击可查看原图。
+- **点赞 / 收藏**：表格「点赞」「收藏」列以复选框形式点赞 / 取消点赞、收藏 / 取消收藏，即时反馈状态。
 - **排序**：点击列头按该列排序（再点切换升/降序）。
 - **列宽**：拖拽列头右侧手柄可像 Excel 一样调整每列宽度，内容自动换行，宽度会记住。
 - **搜索**：右上角按昵称 / 内容 / ID 过滤当前已加载数据。
@@ -46,10 +46,7 @@ https://simple.imsummer.cn/api/v2/posts/...
 
 ## Token 获取与更新
 
-Token 存在 Edge 的 LocalStorage（key：`flutter.UserInfo`，值需解析两次 JSON 后取 `token` 字段，JWT 形式，约 30 天有效）。
-失效后重新登录网站，然后：
-
-- 方式一：在浏览器 DevTools 控制台执行
+- 在浏览器 [simple.imsummer.cn/web](https://simple.imsummer.cn/web) 页面 F12 控制台执行
 
   ```js
   JSON.parse(JSON.parse(localStorage.getItem('flutter.UserInfo'))).token
@@ -63,19 +60,9 @@ Token 存在 Edge 的 LocalStorage（key：`flutter.UserInfo`，值需解析两�
   把结果贴进本工具「登录」对话框（会自动写入 config.json），或直接写入 `config.json` 的 `token` 字段。
   若返回 `undefined`，先在控制台执行 `Object.keys(localStorage)` 确认实际存储 key，以及 `JSON.parse(localStorage.getItem('flutter.UserInfo'))` 里对象是否含 `token` 字段。
 
-- 方式二：直接让我重新检测浏览器（读取 Edge LocalStorage 并自动更新）。
 
 接口返回 401 时前端会提示“登录已失效”，按上面任一种方式更新即可。
 
-## 接口说明（代理后）
-
-| 路径 | 说明 |
-|---|---|
-| `/api/posts?source=posts&per_page=20&last_id=xxx` | 广场全部帖子（默认，对应 `api/v2/posts`） |
-| `/api/posts?source=recommendations&per_page=20&last_id=xxx` | 推荐流 |
-| `/api/posts?source=all&per_page=20&last_id=xxx` | 全部频道 |
-| `/api/me` | 当前用户信息（5 分钟缓存） |
-| `/api/status` | token 是否已配置 |
 
 ## 注意事项
 
