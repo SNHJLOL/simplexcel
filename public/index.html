@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple表格</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- 标题栏 -->
+  <div class="title-bar">
+    <div class="tb-left">
+      <div class="wps-logo" title="Simple表格">S</div>
+      <div class="file-menu" id="fileMenu">
+        <button class="file-btn" id="fileMenuBtn">文件 ▾</button>
+        <div class="file-dropdown hidden" id="fileDropdown">
+          <button data-act="refresh">手动刷新</button>
+          <button data-act="export">导出 CSV</button>
+          <button data-act="cols">显示列</button>
+          <hr>
+          <button data-act="about">关于</button>
+        </div>
+      </div>
+      <div class="tb-divider"></div>
+      <span class="tb-title" id="docTitle">Simple表格</span>
+    </div>
+    <div class="tb-right">
+      <span id="userInfo" class="user-info"></span>
+      <button id="loginBtn" class="auth-btn" title="检测当前登录账号并登录">登录</button>
+      <button id="logoutBtn" class="auth-btn hidden" title="退出当前账号">退出登录</button>
+      <div class="win-btns">
+        <span title="最小化（仿真）">─</span>
+        <span title="最大化（仿真）">□</span>
+        <span title="关闭（仿真）">✕</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 菜单栏 -->
+  <div class="menu-bar" id="menuBar">
+    <span class="menu-tab active" data-tab="开始">开始</span>
+    <span class="menu-tab" data-tab="插入">插入</span>
+    <span class="menu-tab" data-tab="数据">数据</span>
+    <span class="menu-tab" data-tab="样式">样式</span>
+    <span class="menu-tab" data-tab="公式">公式</span>
+    <span class="menu-tab" data-tab="协作">协作</span>
+    <span class="menu-tab" data-tab="视图">视图</span>
+    <span class="menu-tab menu-tab-right" title="仿真展示">效率 · WPS AI</span>
+  </div>
+
+  <!-- 功能区 -->
+  <div class="ribbon">
+    <div class="ribbon-group">
+      <div class="group-row">
+        <button id="copyRowBtn" class="ribbon-btn" title="复制当前选中行（Tab 分隔）">
+          <i class="ico">⧉</i><span>复制</span>
+        </button>
+        <button id="pasteDemoBtn" class="ribbon-btn" title="仿真按钮">
+          <i class="ico">📋</i><span>粘贴</span>
+        </button>
+        <button id="brushDemoBtn" class="ribbon-btn" title="仿真按钮">
+          <i class="ico">🖌</i><span>格式刷</span>
+        </button>
+      </div>
+      <div class="group-label">剪贴板</div>
+    </div>
+    <div class="ribbon-group">
+      <div class="group-row">
+        <button id="refreshBtn" class="ribbon-btn ribbon-primary" title="重新加载第一页（绕过服务端缓存）">
+          <i class="ico">⟳</i><span>刷新</span>
+        </button>
+        <button id="exportBtn" class="ribbon-btn" title="导出当前筛选结果为 CSV">
+          <i class="ico">⇩</i><span>导出CSV</span>
+        </button>
+        <button id="wrapBtn" class="ribbon-btn active" title="切换「内容」列自动换行">
+          <i class="ico">⤶</i><span>换行</span>
+        </button>
+      </div>
+      <div class="group-label">数据</div>
+    </div>
+    <div class="ribbon-group">
+      <div class="group-row">
+        <div class="ribbon-item">
+          <button id="colBtn" class="ribbon-btn" title="选择显示哪些列">
+            <i class="ico">▦</i><span>列显示</span>
+          </button>
+        </div>
+        <div class="ribbon-item ribbon-search">
+          <input id="searchInput" class="search" type="search" placeholder="搜索昵称 / 内容 / ID…">
+          <span class="search-hint">查找</span>
+        </div>
+      </div>
+      <div class="group-label">视图</div>
+    </div>
+  </div>
+
+  <!-- 公式栏 -->
+  <div class="formula-bar">
+    <div class="name-box" id="nameBox" title="当前选中行">A1</div>
+    <div class="fx" title="函数（仿真）">fx</div>
+    <input id="formulaInput" class="formula-input" type="text" readonly
+           placeholder="点击任意一行，这里显示该行内容">
+  </div>
+
+  <div id="errorBar" class="error-bar hidden"></div>
+
+  <!-- 表格区 -->
+  <div class="sheet-wrap">
+    <table class="sheet" id="sheet">
+      <thead id="sheetHead"></thead>
+      <tbody id="sheetBody"></tbody>
+    </table>
+    <div id="sentinel" class="sentinel">
+      <button id="loadMoreBtn">滚动到底部自动加载更多（也可点击）</button>
+    </div>
+  </div>
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <span id="statusMode" class="st-item">就绪</span>
+    <div class="sheet-tabs" id="sheetTabs">
+      <div class="sheet-tab active" id="sheetTabPlaza" title="点击重新加载广场数据">
+        <span id="statusSource">广场</span>
+      </div>
+      <div class="sheet-tab-add" title="新建工作表（仿真）">＋</div>
+    </div>
+    <span class="st-spacer"></span>
+    <span id="statusCount" class="st-item">0 行</span>
+    <span id="statusTime" class="st-item">尚未刷新</span>
+    <div class="zoom-ctrl">
+      <button id="zoomOutPage" class="z-btn" title="缩小（Ctrl+滚轮也可以）">－</button>
+      <span id="zoomPct" class="z-pct">100%</span>
+      <button id="zoomInPage" class="z-btn" title="放大（Ctrl+滚轮也可以）">＋</button>
+    </div>
+  </div>
+</div>
+
+<!-- 图片 / 视频灯箱 -->
+<div id="imageModal" class="modal image-modal hidden">
+  <div class="image-modal-box">
+    <div id="imageModalMedia" class="image-modal-media"></div>
+    <div class="image-modal-bar">
+      <button id="zoomOutBtn" class="btn zoom-btn" title="缩小">－</button>
+      <span id="zoomLabel" class="zoom-label">×1.0</span>
+      <button id="zoomInBtn" class="btn zoom-btn" title="放大">＋</button>
+      <button id="zoomResetBtn" class="btn" title="双击图片可重置">重置</button>
+      <a id="imageModalLink" href="#" target="_blank" rel="noopener">在新窗口打开</a>
+      <button id="imageModalClose" class="btn">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 行详情弹窗 -->
+<div id="detailModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <strong>帖子评论</strong>
+      <button id="modalClose" class="btn btn-close">✕</button>
+    </div>
+    <div class="comments-panel" id="commentsPanel">
+      <div class="comments-head">
+        <span>评论</span>
+        <span id="commentsCount" class="comments-count"></span>
+      </div>
+      <div class="comments-list" id="commentsList">
+        <div class="comments-empty">加载中…</div>
+      </div>
+      <button id="commentsMore" class="comments-more hidden">加载更多评论</button>
+      <div class="comments-input">
+        <textarea id="commentsInput" rows="2" maxlength="500" placeholder="写下你的评论…（Enter 发送，Shift+Enter 换行）"></textarea>
+        <button id="commentsSend" class="btn comments-send">发送</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 登录弹窗 -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-box login-box">
+    <div class="modal-head">
+      <strong>登录 Simple</strong>
+      <button id="loginModalClose" class="btn btn-close">✕</button>
+    </div>
+    <div class="login-body">
+      <div id="loginCurrent" class="login-current">检测中…</div>
+      <label class="login-label" for="loginTokenInput">粘贴新 token（可选，用于切换账号）</label>
+      <textarea id="loginTokenInput" rows="4" placeholder="从 Simple 复制新的 token 粘贴到这里…"></textarea>
+      <div class="login-hint">留空则使用 config.json 中已配置的账号自动登录</div>
+      <div class="login-actions">
+        <button id="loginCancel" class="btn">取消</button>
+        <button id="loginSubmit" class="btn comments-send">登录</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="colPanel" class="panel hidden"></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>

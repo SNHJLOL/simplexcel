@@ -1,0 +1,23 @@
+{
+  "name": "simple-square-excel",
+  "version": "1.0.0",
+  "description": "Simple 广场 · 仿真 Excel（本地代理 + 表格界面）",
+  "private": true,
+  "main": "server.js",
+  "bin": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:exe": "pkg server.js --targets node18-win-x64 --output dist/Simple.exe"
+  },
+  "pkg": {
+    "assets": [
+      "public/**/*"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ]
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
