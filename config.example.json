@@ -1,3 +1,9 @@
 {
-  "token": "在这里粘贴你的登录 token（从 Edge 登录后的 flutter.UserInfo 中提取）"
+  "token": "在这里粘贴你的登录 token（从 Edge 登录后的 flutter.UserInfo 中提取）",
+
+  "_可选_监听地址": "默认只监听 127.0.0.1（仅本机可访问）。想让同一局域网的设备也能打开可填 0.0.0.0，注意这会把带 token 的代理开放给整个局域网",
+  "host": "",
+
+  "_可选_媒体域名白名单": "逗号分隔的域名后缀，默认 imsummer.cn（该域名下所有子域都放行）。源站更换 CDN 域名时在这里追加，例如 \"imsummer.cn,newcdn.example.com\"",
+  "mediaHosts": []
 }

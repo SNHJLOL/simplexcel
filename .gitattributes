@@ -1,0 +1,8 @@
+# 打包.cmd 是 GBK 编码 + CRLF 行尾（Windows 批处理要求），
+# 禁止 git 做换行符 / 文本转换，否则换台机器检出会乱码。
+*.cmd -text
+
+# 二进制资源
+*.png binary
+*.exe binary
+*.zip binary
